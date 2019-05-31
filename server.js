@@ -11,6 +11,7 @@ app.configure(function() {
 // DB Setup
 var connection;
 var db;
+var connected = false;
 
 function guard(onError, onSuccess) {
   return function(error, data) {
@@ -25,10 +26,13 @@ function connect(onConnect) {
 
   if (db) return onConnect(null,db);
 
-  connection.open(function(error, db_) {
-    db = db_;
-    onConnect(null,db);
-  });
+  if (!connected) {
+    connected = true;
+    connection.open(function (error, db_) {
+      db = db_;
+      onConnect(null, db);
+    });
+  }
 };
 
 function collection(collectionName) {
